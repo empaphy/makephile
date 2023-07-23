@@ -2,7 +2,6 @@
 # Makephile - A library for Make.
 ########################################
 
-.DEFAULT_GOAL := makephile_usage
 .SHELLFLAGS   := -ce
 SHELL         := bash
 
