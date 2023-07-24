@@ -7,9 +7,19 @@
 ## For more information, see https://makephile.empaphy.org
 ##
 
-SHELL 	      := bash
-.SHELLFLAGS   := -ce
-.DEFAULT_GOAL := help
+MAKEFILE_VERSION := 0.1.0
+SHELL 	         := bash
+.SHELLFLAGS      := -ce
+
+##
+# Gives some basic info about Makephile.
+#
+# @internal
+#
+.PHONY: makephile_about
+makephile_about:
+	@echo 'Makephile v$(MAKEFILE_VERSION) - A library for GNU Make.'
+	@echo 'For more information, see https://makephile.empaphy.org'
 
 ##
 # Outputs information about the current target.
@@ -59,6 +69,13 @@ makephile_sed_in_place_option = $(shell sed --version >/dev/null 2>&1 && echo '-
 # Provides a unique temporary directory.
 #
 makephile_temp_dir = $(shell mktemp -d -t makephile)
+
+##
+# Ensure .makephile is present for the other include files.
+#
+# @internal
+#
+.makephile/%.mk: .makephile
 
 ##
 # Creates a local `.makephile` directory.
