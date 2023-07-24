@@ -15,20 +15,16 @@ makephile_usage:
 	@echo ""
 	@echo "Targets:"
 	@$(philmk_usage_parse_targets)
-	@echo ""
-	@echo "Variables:"
-	@echo "AWS_PROFILE                    Profile to use when authenticating with AWS."
-
 
 ##
 # Parse the Makefile for targets and their descriptions.
 #
 define philmk_usage_parse_targets
-$(grep_multiline) '$(philmk_usage_match_target)[a-zA-Z_-]+:.*(\n|$$)' $(MAKEFILE_LIST) \
+$(philmk_grep_multiline) '$(philmk_usage_match_target)[a-zA-Z_-]+:.*(\n|$$)' $(MAKEFILE_LIST) \
 | grep --extended-regexp --text "^[a-zA-Z_-]+:.*" \
 | sort \
 | while read -r line; do \
-    comment="$$($(grep_multiline) '$(philmk_usage_match_target)'"$${line}" $(MAKEFILE_LIST) | tr -d '\000')"; \
+    comment="$$($(philmk_grep_multiline) '$(philmk_usage_match_target)'"$${line}" $(MAKEFILE_LIST) | tr -d '\000')"; \
     if [[ "$$comment" =~ "# @internal" ]]; then continue; fi; \
     target="$$(echo "$$comment" | sed -rn 's/^([a-zA-Z_-]+):.*/\1/p')"; \
     desc="$$(echo "$$comment" | sed -rn 's/# (.*)/\1/p')"; \

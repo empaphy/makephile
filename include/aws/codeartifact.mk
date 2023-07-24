@@ -10,10 +10,8 @@ PHILMK_AWS_CODEARTIFACT_LOGIN_LOCK_FILE = ~/.makephile/aws_codeartifact_login.lo
 # Your login information is valid for up to 12 hours, after which you must login again.
 #
 .PHONY: makephile_aws_codeartifact_login
-makephile_aws_codeartifact_login: ~/.makephile/aws_codeartifact_login.lock
-	if [ '$(call philmk_hours_ago,12)' -nt '~/.makephile/aws_codeartifact_login.lock' ]; then \
-	  ${MAKE} ~/.makephile/aws_codeartifact_login.lock; \
-	fi
+makephile_aws_codeartifact_login:
+	$(call makephile_MAKE_after_n_hours,~/.makephile/aws_codeartifact_login.lock,12)
 
 # Creates a lock file to prevent logging into AWS CodeArtifact while w
 ##e still have a valid login.
