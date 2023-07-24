@@ -7,8 +7,9 @@
 ## For more information, see https://makephile.empaphy.org
 ##
 
+MAKEPHILE                := 1
 MAKEPHILE_LOCAL_DIR      := .makephile
-MAKEPHILE_LOCAL_INCLUDES := $(addprefix $(MAKEPHILE_LOCAL_DIR)/,about.mk usage.mk aws.mk)
+MAKEPHILE_LOCAL_INCLUDES := $(addprefix $(MAKEPHILE_LOCAL_DIR)/,usage.mk aws.mk)
 MAKEPHILE_VERSION        := 0.1.0
 
 SHELL 	    := bash
@@ -79,6 +80,7 @@ makephile_temp_dir = $(shell mktemp -d -t makephile)
 # @internal
 #
 $(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_LOCAL_DIR)
+	$(call philmk_download_include_file,$@)
 
 ##
 # Creates a local `.makephile` directory.
@@ -86,7 +88,7 @@ $(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_LOCAL_DIR)
 # @internal
 #
 $(MAKEPHILE_LOCAL_DIR):
-	@git clone https://github.com/empaphy/makephile.git -- $@
+	@mkdir -p $@
 
 ##
 # Removes any locally installed Makephile files.
@@ -143,4 +145,36 @@ endef
 #
 define philmk_export_var
 $(eval export $(1))
+endef
+
+##
+# Downloads an include file.
+#
+# @internal
+#
+# @param  include_file  The include file to download.
+#
+define philmk_download_include_file
+$(call philmk_download_file,makephile.empaphy.org,$(1),$(1))
+endef
+
+##
+# Downloads a file, without needing curl, wget or any other dependency.
+#
+# NOTE: Only supports unencrypted HTTP.
+#
+# @internal
+#
+# @param  host  The host to download from.
+# @param  path  The path to download.
+# @param  file  The file to save to.
+#
+define philmk_download_file
+set -ex; \
+host='$(1)'; \
+path='$(2)'; \
+file='$(3)'; \
+exec 7<>"/dev/tcp/$${host}/80"; \
+printf "GET /$${path} HTTP/1.0\r\nHost: $${host}\r\n\r\n" >&7; \
+$(makephile_grep_multiline) "$(printf "\r\n\r\b")(.|\n)*" <&7 > "$$file"
 endef
