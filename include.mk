@@ -32,10 +32,42 @@ endef
 # Creates a temporary file that has its timestamp set to the provided number of hours ago.
 #
 define makephile_hours_ago
-philmk_timeout_file='$(philmk_temp_dir)/timeout'; \
+philmk_timeout_file='$(makephile_temp_dir)/timeout'; \
 touch -A '-$(1)0000' "$$philmk_timeout_file" > /dev/null 2>&1 || touch -d '$(1) hours ago' "$$philmk_timeout_file" > /dev/null 2>&1; \
 echo "$$philmk_timeout_file"
 endef
+
+##
+# Grep for multiline matches.
+#
+makephile_grep_multiline := grep $(makephile_grep_regexp_flag) --only-matching --no-filename --null-data --text
+
+##
+# Contains the best possible regular expression flag for grep, depending on what is available.
+#
+# So, either `--perl-regexp` or `--extended-regexp`.
+#
+makephile_grep_regexp_flag := $(shell \
+  echo | grep --perl-regexp --only-matching --quiet '^$$' 2>/dev/null \
+  && echo '--perl-regexp' || echo '--extended-regexp' \
+)
+
+##
+# `sed` command with the appropriate `-i` option for in-place editing.
+#
+# Usage of the `-i` operate on FreeBSD and GNU sed differs, so we need to check which one applies.
+#
+makephile_sed_in_place = sed $(makephile_sed_in_place_option)
+
+##
+# Contains the appropriate `-i` option usage for `sed`, depending on what is available.
+#
+makephile_sed_in_place_option = $(shell sed --version >/dev/null 2>&1 && echo '-i ""' || echo '-i')
+
+##
+# Provides a unique temporary directory.
+#
+makephile_temp_dir = $(shell mktemp -d -t makephile)
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
@@ -87,45 +119,3 @@ endef
 define philmk_export_var
 $(eval export $(1))
 endef
-
-##
-# Grep for multiline matches.
-#
-# @internal
-#
-philmk_grep_multiline   := grep $(philmk_grep_regexp_flag) --only-matching --no-filename --null-data --text
-
-##
-# Contains the best possible regular expression flag for grep, depending on what is available.
-#
-# So, either `--perl-regexp` or `--extended-regexp`.
-#
-# @internal
-#
-philmk_grep_regexp_flag := $(shell \
-  echo | grep --perl-regexp --only-matching --quiet '^$$' 2>/dev/null \
-  && echo '--perl-regexp' || echo '--extended-regexp' \
-)
-
-##
-# `sed` command with the appropriate `-i` option for in-place editing.
-#
-# Usage of the `-i` operate on FreeBSD and GNU sed differs, so we need to check which one applies.
-#
-# @internal
-#
-philmk_sed_in_place = sed $(philmk_sed_in_place_option)
-
-##
-# Contains the appropriate `-i` option usage for `sed`, depending on what is available.
-#
-# @internal
-#
-philmk_sed_in_place_option = $(shell sed --version >/dev/null 2>&1 && echo '-i ""' || echo '-i')
-
-##
-# Provides a unique temporary directory.
-#
-# @internal
-#
-philmk_temp_dir = $(shell mktemp -d -t makephile)

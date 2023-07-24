@@ -1,5 +1,6 @@
-# Makephile
 _Love make, not war_
+
+---
 
 Makephile is a library for makefiles. It provides a set of functions to make
 writing makefiles easier.
