@@ -78,21 +78,21 @@ makephile_temp_dir = $(shell mktemp -d -t makephile)
 #
 # @internal
 #
-$(MAKEPHILE_LOCAL_INCLUDES): $(MAKEFILE_LOCAL_DIR)
+$(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_LOCAL_DIR)
 
 ##
 # Creates a local `.makephile` directory.
 #
 # @internal
 #
-$(MAKEFILE_LOCAL_DIR):
+$(MAKEPHILE_LOCAL_DIR):
 	@git clone https://github.com/empaphy/makephile.git -- $@
 
 ##
 # Removes any locally installed Makephile files.
 #
 makephile_clean:
-	@rm -rf $(MAKEFILE_LOCAL_DIR) .makephile.mk
+	@rm -rf $(MAKEPHILE_LOCAL_DIR) .makephile.mk
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
