@@ -165,16 +165,16 @@ endef
 #
 # @internal
 #
-# @param  host  The host to download from.
-# @param  path  The path to download.
-# @param  file  The file to save to.
+# @param  philmk_host  The host to download from.
+# @param  philmk_path  The path to download.
+# @param  philmk_file  The file to save to.
 #
 define philmk_download_file
 set -ex; \
-host='$(1)'; \
-path='$(2)'; \
-file='$(3)'; \
-exec 7<>"/dev/tcp/$${host}/80"; \
-printf "GET /$${path} HTTP/1.0\r\nHost: $${host}\r\n\r\n" >&7; \
-$(makephile_grep_multiline) "$(printf "\r\n\r\b")(.|\n)*" <&7 > "$$file"
+philmk_host='$(1)'; \
+philmk_path='$(2)'; \
+philmk_file='$(3)'; \
+exec 7<>"/dev/tcp/$${philmk_host}/80"; \
+printf "GET /$${philmk_path} HTTP/1.0\r\nHost: $${philmk_host}\r\n\r\n" >&7; \
+$(makephile_grep_multiline) "$(printf "\r\n\r\b")(.|\n)*" <&7 > "$$philmk_file"
 endef
