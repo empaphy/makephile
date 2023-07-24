@@ -17,24 +17,15 @@ SHELL 	      := bash
 makephile_target_info = $(eval $(info $(NEWLINE)$(philmk_bold)> Target $@$(philmk_sgr)))
 
 ##
-# Make the provided target if it is older than the provided number of hours.
+# Make the target with a timeout, by providing a timeout target.
 #
 # @param The target to make.
-# @param The number of hours.
+# @param The number of hours after which the target should be considered old.
+# @param The timeout file to create. Use this as dependency for your target.
 #
-define makephile_MAKE_after_n_hours
-if [ '$(call makephile_hours_ago,$(2))' -nt '$(1)' ]; then \
-  ${MAKE} $(1); \
-fi
-endef
-
-##
-# Creates a temporary file that has its timestamp set to the provided number of hours ago.
-#
-define makephile_hours_ago
-philmk_timeout_file='$(makephile_temp_dir)/timeout'; \
-touch -A '-$(1)0000' "$$philmk_timeout_file" > /dev/null 2>&1 || touch -d '$(1) hours ago' "$$philmk_timeout_file" > /dev/null 2>&1; \
-echo "$$philmk_timeout_file"
+define makephile_MAKE_with_timeout_hours
+touch -A '-$(2)0000' '$(3)' > /dev/null 2>&1 || touch -d '$(2) hours ago' '$(3)' > /dev/null 2>&1; \
+${MAKE} $(1)
 endef
 
 ##
@@ -70,12 +61,20 @@ makephile_sed_in_place_option = $(shell sed --version >/dev/null 2>&1 && echo '-
 makephile_temp_dir = $(shell mktemp -d -t makephile)
 
 ##
+# Creates a local `.makephile` directory.
+#
+# @internal
+#
+.makephile:
+	@git clone https://github.com/empaphy/makephile.git -- $@
+
+##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
 #
 # @internal
 #
 ~/.empaphy/makephile: | ~/.empaphy
-	@git clone https://github.com/empaphy/makephile.git -- ~/.empaphy/makephile
+	@git clone https://github.com/empaphy/makephile.git -- $@
 
 ##
 # Create ~/.empaphy config dir in the user's home directory.
@@ -83,7 +82,7 @@ makephile_temp_dir = $(shell mktemp -d -t makephile)
 # @internal
 #
 ~/.empaphy:
-	@mkdir ~/.empaphy
+	@mkdir $@
 
 ##
 # Output bold text.
