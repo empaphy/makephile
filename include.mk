@@ -2,8 +2,9 @@
 ## Makephile v0.1.0 - A library for GNU Make.                                 ##
 ################################################################################
 
+SHELL 	      := bash
 .SHELLFLAGS   := -ce
-SHELL         := bash
+.DEFAULT_GOAL := help
 
 ~/.empaphy/makephile: | ~/.empaphy
 	@git clone https://github.com/empaphy/makephile.git -- ~/.empaphy/makephile
