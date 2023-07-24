@@ -7,9 +7,12 @@
 ## For more information, see https://makephile.empaphy.org
 ##
 
-MAKEFILE_VERSION := 0.1.0
-SHELL 	         := bash
-.SHELLFLAGS      := -ce
+MAKEPHILE_LOCAL_DIR      := .makephile
+MAKEPHILE_LOCAL_INCLUDES := $(addprefix $(MAKEPHILE_LOCAL_DIR)/,about.mk usage.mk aws.mk)
+MAKEPHILE_VERSION        := 0.1.0
+
+SHELL 	    := bash
+.SHELLFLAGS := -ce
 
 ##
 # Gives some basic info about Makephile.
@@ -18,7 +21,7 @@ SHELL 	         := bash
 #
 .PHONY: makephile_about
 makephile_about:
-	@echo 'Makephile v$(MAKEFILE_VERSION) - A library for GNU Make.'
+	@echo 'Makephile v$(MAKEPHILE_VERSION) - A library for GNU Make.'
 	@echo 'For more information, see https://makephile.empaphy.org'
 
 ##
@@ -75,15 +78,21 @@ makephile_temp_dir = $(shell mktemp -d -t makephile)
 #
 # @internal
 #
-.makephile/%.mk: .makephile
+$(MAKEPHILE_LOCAL_INCLUDES): $(MAKEFILE_LOCAL_DIR)
 
 ##
 # Creates a local `.makephile` directory.
 #
 # @internal
 #
-.makephile:
+$(MAKEFILE_LOCAL_DIR):
 	@git clone https://github.com/empaphy/makephile.git -- $@
+
+##
+# Removes any locally installed Makephile files.
+#
+makephile_clean:
+	@rm -rf $(MAKEFILE_LOCAL_DIR) .makephile.mk
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
