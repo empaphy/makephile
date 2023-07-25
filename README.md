@@ -1,5 +1,5 @@
 # makephile
-_Love make, not war_
+_Love make, not jar_
 
 ---
 

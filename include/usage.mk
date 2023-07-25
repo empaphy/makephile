@@ -2,8 +2,6 @@
 # Usage help features for Makephile.
 ########################################
 
-.DEFAULT_GOAL := makephile_usage
-
 ##
 # Output usage documentation.
 #
