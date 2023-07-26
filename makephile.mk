@@ -7,7 +7,7 @@
 ## For more information, see https://makephile.empaphy.org
 ##
 
-MAKEPHILE                := 1
+MAKEPHILE_LOADED         := 1
 MAKEPHILE_LOCAL_DIR      := .makephile
 MAKEPHILE_LOCAL_INCLUDES := $(addprefix $(MAKEPHILE_LOCAL_DIR)/,usage.mk aws.mk)
 MAKEPHILE_VERSION        := 0.1.0
@@ -43,11 +43,6 @@ ${MAKE} $(1)
 endef
 
 ##
-# Grep for multiline matches.
-#
-makephile_grep_multiline := grep $(makephile_grep_regexp_flag) --only-matching --no-filename --null-data --text
-
-##
 # Contains the best possible regular expression flag for grep, depending on what is available.
 #
 # So, either `--perl-regexp` or `--extended-regexp`.
@@ -56,6 +51,11 @@ makephile_grep_regexp_flag := $(shell \
   echo | grep --perl-regexp --only-matching --quiet '^$$' 2>/dev/null \
   && echo '--perl-regexp' || echo '--extended-regexp' \
 )
+
+##
+# Grep for multiline matches.
+#
+makephile_grep_multiline := grep $(makephile_grep_regexp_flag) --only-matching --no-filename --null-data --text
 
 ##
 # `sed` command with the appropriate `-i` option for in-place editing.
