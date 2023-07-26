@@ -80,7 +80,7 @@ makephile_temp_dir = $(shell mktemp -d -t makephile)
 # @internal
 #
 $(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_LOCAL_DIR)
-	$(call philmk_download_include_file,$@)
+	@$(call philmk_download_include_file,$@)
 
 ##
 # Creates a local `.makephile` directory.
@@ -155,7 +155,7 @@ endef
 # @param  include_file  The include file to download.
 #
 define philmk_download_include_file
-$(call philmk_download_file,makephile.empaphy.org,$(1),$(1))
+@$(call philmk_download_file,makephile.empaphy.org,/$(subst $(MAKEPHILE_LOCAL_DIR)/,include/,$(1)),$(1))
 endef
 
 ##
@@ -170,11 +170,16 @@ endef
 # @param  philmk_file  The file to save to.
 #
 define philmk_download_file
-set -ex; \
+set -e; \
 philmk_host='$(1)'; \
 philmk_path='$(2)'; \
 philmk_file='$(3)'; \
+philmk_temp='$(makephile_temp_dir)/philmk_download_file'; \
 exec 7<>"/dev/tcp/$${philmk_host}/80"; \
-printf "GET /$${philmk_path} HTTP/1.0\r\nHost: $${philmk_host}\r\n\r\n" >&7; \
-$(makephile_grep_multiline) "$(printf "\r\n\r\b")(.|\n)*" <&7 > "$$philmk_file"
+printf "GET $${philmk_path} HTTP/1.0\r\nHost: $${philmk_host}\r\n\r\n" >&7; \
+cat > "$$philmk_temp" <&7; \
+offset="$$(grep --byte-offset --extended-regexp --max-count=1 --no-filename '^'$$'\r''?$$' "$$philmk_temp")"; \
+offset="$${offset%:*}"; \
+offset=$$((offset+3)); \
+tail "+$${offset}c" "$$philmk_temp" > "$$philmk_file"
 endef
