@@ -9,7 +9,7 @@
 
 MAKEPHILE_INCLUDE        := 1
 MAKEPHILE_LOCAL_DIR      := .makephile
-MAKEPHILE_LOCAL_INCLUDES := $(addprefix $(MAKEPHILE_LOCAL_DIR)/,usage.mk aws.mk)
+MAKEPHILE_LOCAL_INCLUDES := $(addprefix $(MAKEPHILE_LOCAL_DIR)/,aws.mk dotenv.mk usage.mk)
 MAKEPHILE_VERSION        := 0.1.0
 
 SHELL 	    := bash
@@ -31,6 +31,7 @@ makephile_about:
 # @internal
 #
 $(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_LOCAL_DIR)
+	@$(info Downloading included file: $@)
 	@$(call philmk_download_include_file,$@)
 
 ##
@@ -125,7 +126,7 @@ $(eval export $(1))
 endef
 
 ##
-# Downloads an include file.
+# Downloads a Makephile include file.
 #
 # @internal
 #
