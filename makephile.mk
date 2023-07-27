@@ -95,6 +95,15 @@ makephile_sed_in_place_option = $(shell sed --version >/dev/null 2>&1 && echo '-
 makephile_sed_in_place = sed $(makephile_sed_in_place_option)
 
 ##
+# Returns a substring of the provided string.
+#
+# @param The string to get the substring from.
+# @param The start index. (NOTE: Negative values are _NOT_ allowed.)
+# @param The end index.   (NOTE: Negative values are _NOT_ allowed.)
+#
+makephile_substr = $(shell echo "$(1)" | cut -c$(2)-$(3))
+
+##
 # Provides a unique temporary directory.
 #
 makephile_temp_dir = $(shell mktemp -d -t makephile)
