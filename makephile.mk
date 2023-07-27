@@ -109,11 +109,9 @@ makephile_get_temp_file = $(makephile_temp_dir)/$(1)
 ##
 # Exports the provided environment variables.
 #
-# @internal
-#
 # @param The environment variable to export.
 #
-define philmk_export_var
+define makephile_export_var
 $(eval export $(1))
 endef
 
