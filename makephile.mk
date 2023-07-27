@@ -7,7 +7,7 @@
 ## For more information, see https://makephile.empaphy.org
 ##
 
-MAKEPHILE_LOADED         := 1
+MAKEPHILE_INCLUDE        := 1
 MAKEPHILE_LOCAL_DIR      := .makephile
 MAKEPHILE_LOCAL_INCLUDES := $(addprefix $(MAKEPHILE_LOCAL_DIR)/,usage.mk aws.mk)
 MAKEPHILE_VERSION        := 0.1.0
