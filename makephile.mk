@@ -107,7 +107,7 @@ makephile_substr = $(shell echo "$(1)" | cut -c$(2)-$(3))
 ##
 # Provides a unique temporary directory.
 #
-makephile_temp_dir = $(shell mktemp -d -t makephile)
+makephile_temp_dir = $(shell mktemp -d -t makephile.XXXXXXXXXX)
 
 ##
 # Returns a unique temporary file path.
