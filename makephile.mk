@@ -162,19 +162,23 @@ offset=$$((offset+3)); \
 tail "+$${offset}c" "$$philmk_temp" > "$$philmk_file"
 endef
 
+philmk_tput = $(shell [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ] && tput $(1) || echo -n '')
+
 ##
 # Output bold text.
 #
 # @internal
 #
-philmk_bold := $(shell [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ] && tput bold || echo -n '')
+philmk_bold := $(call philmk_tput,bold)
+
+
 
 ##
 # Reset the text style.
 #
 # @internal
 #
-philmk_sgr  := $(shell [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ] && tput sgr0 || echo -n '')
+philmk_sgr  := $(call philmk_tput,sgr0)
 
 ##
 # Used to create a newline.

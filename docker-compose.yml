@@ -1,0 +1,8 @@
+name: "makephile"
+
+services:
+  makephile:
+    image: empaphy/makephile:${MAKEPHILE_VERSION:-latest}
+    build: .
+    volumes:
+      - { type: bind, source: ., target: /opt/makephile }
