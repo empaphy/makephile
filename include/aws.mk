@@ -27,9 +27,17 @@ makephile_aws = aws $(makephile_aws_profile_option)
 #
 # @internal
 #
-.PHONY: makephile_export_aws_credentials
-makephile_export_aws_credentials:
+.PHONY: makephile_aws_export_credentials
+makephile_aws_export_credentials:
 	$(call export_var,AWS_ACCOUNT)
 	$(call export_var,AWS_ACCESS_KEY_ID)
 	$(call export_var,AWS_SECRET_ACCESS_KEY)
 	$(call export_var,AWS_REGION)
+
+##
+# Exports the AWS credentials & related environment variables.
+#
+# @deprecated Use `makephile_aws_export_credentials` instead.
+#
+.PHONY: makephile_export_aws_credentials
+makephile_export_aws_credentials: makephile_aws_export_credentials
