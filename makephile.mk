@@ -159,7 +159,7 @@ cat > "$$philmk_temp" <&7; \
 offset="$$(grep --byte-offset --extended-regexp --max-count=1 --no-filename '^'$$'\r''?$$' "$$philmk_temp")"; \
 offset="$${offset%:*}"; \
 offset=$$((offset+3)); \
-tail "+$${offset}c" "$$philmk_temp" > "$$philmk_file"
+tail --bytes="+$${offset}" "$$philmk_temp" > "$$philmk_file"
 endef
 
 philmk_tput = $(shell [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ] && tput $(1) || echo -n '')
