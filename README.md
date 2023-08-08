@@ -14,8 +14,9 @@ Add the following snippet to your Makefile:
 ```makefile
 # This snippet bootstraps Makephile by downloading it.
 .makephile.mk:
-	@m=makephile;h=$$m.empaphy.org;exec 7<>/dev/tcp/$$h/80 && printf "GET %b" \
-	"/m HTTP/1.0\r\nHost: $$h\r\n\r\n">&7 && grep -Eioz "## $$m(.|\n)*"<&7 > $@
+	@t=`mktemp`;h=makephile.empaphy.org;exec 7<>/dev/tcp/$$h/80;printf "GET %b"\
+	"/m HTTP/1.0\r\nHost: $$h\r\n\r\n">&7;b=$$(cat<&7|tee "$$t"|grep -bEh \
+	$$'^\r?$$');tail -c+$$(($${b%%:*}+3)) "$$t">$@;rm "$$t"
 include .makephile.mk
 
 # Add additional Makephile includes here, they will be downloaded automatically.
