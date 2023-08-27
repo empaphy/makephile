@@ -7,8 +7,8 @@
 #
 # For more information, see https://makephile.empaphy.org
 
+MAKEPHILE                = 1
 MAKEPHILE_VERSION        = 0.1.0
-MAKEPHILE_INCLUDE        = 1
 MAKEPHILE_LOCAL_INCLUDES = $(addprefix $(MAKEPHILE_LOCAL_DIR)/,aws.mk dotenv.mk usage.mk)
 
 ##

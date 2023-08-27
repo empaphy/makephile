@@ -1,3 +1,5 @@
 include ../../bootstrap.mk
 
-include .makephile/usage.mk
+ifdef MAKEPHILE
+include $(MAKEPHILE_INCLUDE)/usage.mk
+endif

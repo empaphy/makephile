@@ -9,22 +9,23 @@
 
 MAKEPHILE_HOST            = makephile.empaphy.org
 MAKEPHILE_LOCAL_DIR       = .makephile
-MAKEPHILE_MK              = $(MAKEPHILE_LOCAL_DIR)/makephile.mk
-MAKEPHILE_SHA256SUMS_HASH = de535b046082bb717ee3b970227545b0b0faf0c73d4e3071f52be8d7119bd2ac
+MAKEPHILE_INCLUDE         = $(MAKEPHILE_LOCAL_DIR)/inc
+MAKEPHILE_SHA256SUMS_HASH = b2024244d0ca445107f017847621b33a8c09baa6873c12986028766bc09cc3ff
 
 SHELL 	    := bash
 .SHELLFLAGS := -ce
 
-$(MAKEPHILE_MK): $(MAKEPHILE_LOCAL_DIR) $(MAKEPHILE_LOCAL_DIR)/SHA256SUMS
+$(MAKEPHILE_INCLUDE)/makephile.mk: $(MAKEPHILE_INCLUDE) $(MAKEPHILE_INCLUDE)/SHA256SUMS
 	@$(info Bootstrapping Makephile at $@)
-	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_LOCAL_DIR)/,inc/,$@),$@)
-include $(MAKEPHILE_MK)
+	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_LOCAL_DIR)/,,$@),$@)
+	@cd $(MAKEPHILE_INCLUDE); sha256sum --check --ignore-missing SHA256SUMS || rm $@
+include $(MAKEPHILE_INCLUDE)/makephile.mk
 
-$(MAKEPHILE_LOCAL_DIR)/SHA256SUMS: $(MAKEPHILE_LOCAL_DIR)
+$(MAKEPHILE_INCLUDE)/SHA256SUMS: $(MAKEPHILE_INCLUDE)
 	@$(info Downloading SHA256SUMS to $@)
 	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/inc/SHA256SUMS,$@,$(MAKEPHILE_SHA256SUMS_HASH))
 
-$(MAKEPHILE_LOCAL_DIR):
+$(MAKEPHILE_INCLUDE):
 	@mkdir -p $@
 
 ########################################
@@ -49,5 +50,8 @@ tail --bytes="+$${offset}" "$${mphl_temp}/raw" > "$${mphl_temp}/download"; \
 rm -f "$${mphl_temp}/raw"; \
 if [ -z '$(4)' ] || echo "$(4) $${mphl_temp}/download" | sha256sum --check --status --strict; then \
   mv "$${mphl_temp}/download" '$(3)'; \
+else \
+  >&2 echo "ERROR: Incorrect SHA256 checksum for '$(3)'"; \
+  exit 1; \
 fi
 endef
