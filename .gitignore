@@ -1,0 +1,6 @@
+.DS_Store
+.Trash
+.makephile
+
+/.env
+/docker-compose.override.yml

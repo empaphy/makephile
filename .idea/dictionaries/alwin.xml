@@ -2,7 +2,11 @@
   <dictionary name="alwin">
     <words>
       <w>makephile</w>
+      <w>mphl</w>
       <w>philmk</w>
+      <w>putenv</w>
+      <w>tempnam</w>
+      <w>tmpfile</w>
     </words>
   </dictionary>
 </component>

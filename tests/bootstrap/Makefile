@@ -1,3 +1,3 @@
 include ../../bootstrap.mk
 
-include .makephile/makephile.mk
+include .makephile/usage.mk
