@@ -11,37 +11,44 @@ MAKEPHILE_HOST            = makephile.empaphy.org
 MAKEPHILE_INCLUDE         = 1
 MAKEPHILE_LOCAL_DIR       = .makephile
 MAKEPHILE_MK              = $(MAKEPHILE_LOCAL_DIR)/makephile.mk
-MAKEPHILE_SHA256SUMS_HASH = 6427831247ec8f4721242cf62a18bf15bcefe660829771392df48b247ba003a2
+MAKEPHILE_SHA256SUMS_HASH = de535b046082bb717ee3b970227545b0b0faf0c73d4e3071f52be8d7119bd2ac
 
 SHELL 	    := bash
 .SHELLFLAGS := -ce
 
-$(MAKEPHILE_MK): $(MAKEPHILE_LOCAL_DIR) $(MAKEPHILE_LOCAL_DIR)/SHA224SUMS
+$(MAKEPHILE_MK): $(MAKEPHILE_LOCAL_DIR) $(MAKEPHILE_LOCAL_DIR)/SHA256SUMS
 	@$(info Bootstrapping Makephile at $@)
-	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_LOCAL_DIR)/,include/,$@),$@)
+	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_LOCAL_DIR)/,inc/,$@),$@)
 include $(MAKEPHILE_MK)
 
-# TODO Versioning?
-$(MAKEPHILE_LOCAL_DIR)/SHA224SUMS: $(MAKEPHILE_LOCAL_DIR)
-	@$(info Downloading SHA224SUMS to $@)
-	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/include/SHA224SUMS,$@,$(MAKEPHILE_SHA256SUMS_HASH))
+$(MAKEPHILE_LOCAL_DIR)/SHA256SUMS: $(MAKEPHILE_LOCAL_DIR)
+	@$(info Downloading SHA256SUMS to $@)
+	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/inc/SHA256SUMS,$@,$(MAKEPHILE_SHA256SUMS_HASH))
 
 $(MAKEPHILE_LOCAL_DIR):
 	@mkdir -p $@
 
-# TODO add support for checking sha224sum
+########################################
+# Download file using bash.
+# Parameters:
+#   Host to download file from.
+#   Path to file on host.
+#   Target filename.
+#   SHA256 hash that the file should have. (optional)
+########################################
 define _mphl_download_file
-set -ex; \
-_mphl_temp_dir="$$(mktemp -d)"; \
+set -e; \
+mphl_temp="$$(mktemp -d)"; \
 exec 7<>'/dev/tcp/$(1)/80'; \
 echo $$'GET $(2) HTTP/1.0\r\nHost: $(1)\r\n\r' >&7; \
 offset=$$( \
-  cat <&7 | tee "$${_mphl_temp_dir}/raw" | \
+  cat <&7 | tee "$${mphl_temp}/raw" | \
   grep --byte-offset --extended-regexp --max-count=1 --no-filename $$'^\r?$$' \
 ); \
 offset=$$(($${offset%:*}+3)); \
-tail --bytes="+$${offset}" "$${_mphl_temp_dir}/raw" > "$${_mphl_temp_dir}/download"; \
-rm -f "$${_mphl_temp_dir}/raw"; \
-if [ -z '$(4)' ] || echo "$(4) $${_mphl_temp_dir}/download" | sha256sum --status --strict; then
-mv "$${_mphl_temp_dir}/download" '$(3)'
+tail --bytes="+$${offset}" "$${mphl_temp}/raw" > "$${mphl_temp}/download"; \
+rm -f "$${mphl_temp}/raw"; \
+if [ -z '$(4)' ] || echo "$(4) $${mphl_temp}/download" | sha256sum --check --status --strict; then \
+  mv "$${mphl_temp}/download" '$(3)'; \
+fi
 endef
