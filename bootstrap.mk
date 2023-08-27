@@ -8,7 +8,6 @@
 # For more information, see https://makephile.empaphy.org
 
 MAKEPHILE_HOST            = makephile.empaphy.org
-MAKEPHILE_INCLUDE         = 1
 MAKEPHILE_LOCAL_DIR       = .makephile
 MAKEPHILE_MK              = $(MAKEPHILE_LOCAL_DIR)/makephile.mk
 MAKEPHILE_SHA256SUMS_HASH = de535b046082bb717ee3b970227545b0b0faf0c73d4e3071f52be8d7119bd2ac
