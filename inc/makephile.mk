@@ -9,7 +9,8 @@
 
 MAKEPHILE                = 1
 MAKEPHILE_VERSION        = 0.1.0
-MAKEPHILE_LOCAL_INCLUDES = $(addprefix $(MAKEPHILE_LOCAL_DIR)/,aws.mk dotenv.mk usage.mk)
+MAKEPHILE_HOME          ?= .makephile
+MAKEPHILE_LOCAL_INCLUDES = $(addprefix $(MAKEPHILE_HOME)/,aws.mk dotenv.mk usage.mk)
 
 ##
 # Gives some basic info about Makephile.
@@ -29,7 +30,7 @@ mphl_about:
 #
 # @internal
 #
-$(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_LOCAL_DIR)
+$(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_HOME)
 	@$(info Downloading included file: $@)
 	@$(call _mphl_download_include_file,$@)
 
@@ -37,7 +38,7 @@ $(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_LOCAL_DIR)
 # Removes any locally installed Makephile files.
 #
 mphl_clean:
-	@rm -rf $(MAKEPHILE_LOCAL_DIR) .makephile.mk
+	@rm -rf $(MAKEPHILE_HOME) .makephile.mk
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
