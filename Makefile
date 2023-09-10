@@ -1,17 +1,13 @@
-
 include include/makephile.mk
 include include/usage.mk
 
 .SHELLFLAGS := -ce
+SHELL       := bash
 
-include_SHA256SUMS = include/SHA256SUMS
-
-SHA256SUMS:
-	@sha224sum *.mk > $@
-
-$(include_SHA256SUMS):
-	$(mphl_target_info)
-	@cd include && sha224sum *.mk > SHA256SUMS
+.PHONY: HEAD.sha256
+HEAD.sha256:
+	@sha256sum *.mk inc/*.mk inc/aws/*.mk > $@
+	@sha256sum $@ > $@.sha256sum
 
 .PHONY: build
 build:
