@@ -14,7 +14,7 @@
 #            accompanying hash as well!
 #
 MAKEPHILE_VERSION         = HEAD
-MAKEPHILE_SHA256SUMS_HASH = 85de86da2391f92b554a325028ca3114da66e369704144bdc91e7fe2560ab7ec
+MAKEPHILE_SHA256SUMS_HASH = 874a8ee5f7086d76b92fec18764ca306810eab2db602219ad6263faf0495fa80
 
 MAKEPHILE_HOST       = makephile.empaphy.org
 MAKEPHILE_HOME       = .makephile
@@ -70,9 +70,10 @@ define _mphl_check_sha256sums
 set -e; \
 cd $(MAKEPHILE_HOME); \
 if ! echo "$(MAKEPHILE_SHA256SUMS_HASH) $(MAKEPHILE_SHA256SUMS)" | sha256sum --check --status --strict; then \
-	exit 1; \
+  echo "Failed to verify hash for '$(MAKEPHILE_SHA256SUMS)'." >&2; \
+  exit 1; \
 fi; \
 if ! sha256sum --check --ignore-missing $(MAKEPHILE_SHA256SUMS); then \
-	exit 1; \
+  exit 1; \
 fi
 endef
