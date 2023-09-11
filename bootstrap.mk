@@ -13,11 +13,11 @@
 # IMPORTANT: Whenever you bump your Makephile version, you should update the
 #            accompanying hash as well!
 #
-MAKEPHILE_VERSION         = HEAD
-MAKEPHILE_SHA256SUMS_HASH = 3978e65b1c9219f93a8ac82d058e73306136dcd980f3067f4579371b4d206937
+MAKEPHILE_VERSION         = dev
+MAKEPHILE_SHA256SUMS_HASH = cd58a9117a5ee0578ab6afe7a2d81d1431326e89c8a1549e73a02a4154c12ae1
 
 MAKEPHILE_HOST       = makephile.empaphy.org
-MAKEPHILE_HOME       = .makephile
+MAKEPHILE_HOME       = .makephile/$(MAKEPHILE_VERSION)
 MAKEPHILE_INCLUDE    = $(MAKEPHILE_HOME)/inc
 MAKEPHILE_SHA256SUMS = SHA256SUMS
 
