@@ -156,7 +156,7 @@ mphl_export_var = $(mphl_putenv)
 #   Target filename.
 ########################################
 define mphl_download_file
-set -ex; \
+set -e; \
 mphl_temp="$$(mktemp -d)"; \
 exec 7<>'/dev/tcp/$(1)/80'; \
 echo $$'GET $(2) HTTP/1.0\r\nHost: $(1)\r\n\r' >&7; \
