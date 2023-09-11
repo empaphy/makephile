@@ -1,11 +1,12 @@
-include include/makephile.mk
-include include/usage.mk
+include inc/makephile.mk
+include inc/usage.mk
 
 .SHELLFLAGS := -ce
 SHELL       := bash
 
-.PHONY: HEAD.sha256
-HEAD.sha256:
+.PHONY: $(MAKEPHILE_VERSION).sha256
+$(MAKEPHILE_VERSION).sha256:
+	$(mphl_target_info)
 	@sha256sum inc/*.mk inc/aws/*.mk > $@
 	@sha256sum $@ > $@.sha256sum
 
