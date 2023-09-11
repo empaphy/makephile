@@ -27,13 +27,14 @@ mphl_about:
 	@echo 'For more information, see https://makephile.empaphy.org'
 
 ##
-# Ensure .makephile is present for the other include files.
+# Download Empaphy include file
 #
 # @internal
 #
 $(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_INCLUDE)
-	@$(info Downloading included file: $@)
-	@$(call _mphl_download_include_file,$@)
+	$(info Downloading Empaphy file '$@' from 'http://makephile.empaphy.org/$(subst $(MAKEPHILE_HOME)/,,$@)')
+	$(call mphl_download_file,makephile.empaphy.org,/$(subst $(MAKEPHILE_HOME)/,,$@),$@)
+	cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_SHA256SUMS)
 
 ##
 # Removes any locally installed Makephile files.
@@ -74,7 +75,6 @@ define mphl_MAKE_with_timeout_hours
 touch -A '-$(2)0000' '$(3)' > /dev/null 2>&1 || touch -d '$(2) hours ago' '$(3)' > /dev/null 2>&1; \
 ${MAKE} $(1)
 endef
-makephile_MAKE_with_timeout_hours = $(mphl_MAKE_with_timeout_hours)
 
 ########################################
 # Escape a string for use in a regular expression.
@@ -82,13 +82,11 @@ makephile_MAKE_with_timeout_hours = $(mphl_MAKE_with_timeout_hours)
 #   The string to escape.
 ########################################
 mphl_regex_escape_value = $(shell echo "$(1)" | sed 's/[]\/$$*.^[]/\\&/g' || exit 1)
-makephile_regex_escape_value = $(mphl_regex_escape_value)
 
 ##
 # Contains the appropriate `-i` option usage for `sed`, depending on what is available.
 #
 mphl_sed_in_place_option = $(shell sed --version >/dev/null 2>&1 && echo '-i ""' || echo '-i')
-makephile_sed_in_place_option = $(mphl_sed_in_place_option)
 
 ##
 # `sed` command with the appropriate `-i` option for in-place editing.
@@ -96,7 +94,6 @@ makephile_sed_in_place_option = $(mphl_sed_in_place_option)
 # Usage of the `-i` operate on FreeBSD and GNU sed differs, so we need to check which one applies.
 #
 mphl_sed_in_place = sed $(makephile_sed_in_place_option)
-makephile_sed_in_place = $(mphl_sed_in_place)
 
 ########################################
 # Returns a substring of the provided string.
@@ -106,7 +103,6 @@ makephile_sed_in_place = $(mphl_sed_in_place)
 #   The end index.   (NOTE: Negative values are _NOT_ allowed.)
 ########################################
 mphl_substr = $(shell echo "$(1)" | cut -c$(2)-$(3))
-makephile_substr = $(mphl_substr)
 
 ########################################
 # Create file with unique file name.
@@ -134,7 +130,7 @@ mphl_tmpfile = $(shell mktemp -t makephileXXXXXX)
 # Parameters:
 #   The file name to use.
 ########################################
-makephile_get_temp_file = $(call mphl_tempnam,$(TMPDIR),$(1))
+mphl_get_temp_file = $(call mphl_tempnam,$(TMPDIR),$(1))
 
 ########################################
 # Sets the value of an environment variable.
@@ -150,7 +146,28 @@ endef
 # Parameters:
 #   The environment variable to export.
 ########################################
-makephile_export_var = $(mphl_putenv)
+mphl_export_var = $(mphl_putenv)
+
+########################################
+# Download file using bash.
+# Parameters:
+#   Host to download file from.
+#   Path to file on host.
+#   Target filename.
+########################################
+define mphl_download_file
+set -ex; \
+mphl_temp="$$(mktemp -d)"; \
+exec 7<>'/dev/tcp/$(1)/80'; \
+echo $$'GET $(2) HTTP/1.0\r\nHost: $(1)\r\n\r' >&7; \
+offset=$$( \
+  cat <&7 | tee "$${mphl_temp}/raw" | \
+  grep --byte-offset --extended-regexp --max-count=1 --no-filename $$'^\r?$$' \
+); \
+offset=$$(($${offset%:*}+3)); \
+tail --bytes="+$${offset}" "$${mphl_temp}/raw" > '$(3)'; \
+rm -f "$${mphl_temp}/raw"
+endef
 
 ########################################
 # Wrapper for the `tput` command.
@@ -193,4 +210,3 @@ makephile_grep_regexp_flag := $(mphl_grep_regexp_flag)
 # Grep for multiline matches.
 #
 mphl_grep_multiline := grep $(mphl_grep_regexp_flag) --only-matching --no-filename --null-data --text
-makephile_grep_multiline := $(mphl_grep_multiline)

@@ -14,7 +14,7 @@
 #            accompanying hash as well!
 #
 MAKEPHILE_VERSION         = dev
-MAKEPHILE_SHA256SUMS_HASH = cd58a9117a5ee0578ab6afe7a2d81d1431326e89c8a1549e73a02a4154c12ae1
+MAKEPHILE_SHA256SUMS_HASH = 8de2f4e7364fd578be6d925453fc1d44fa7eb820ff6cb2c2d7b8486627a412a3
 
 MAKEPHILE_HOST       = makephile.empaphy.org
 MAKEPHILE_HOME       = .makephile/$(MAKEPHILE_VERSION)
@@ -24,19 +24,19 @@ MAKEPHILE_SHA256SUMS = SHA256SUMS
 SHELL 	    := bash
 .SHELLFLAGS := -ce
 
-$(MAKEPHILE_INCLUDE)/makephile.mk: $(MAKEPHILE_INCLUDE) $(MAKEPHILE_HOME)/$(MAKEPHILE_SHA256SUMS)
-	@$(info Bootstrapping Makephile at $@)
-	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_HOME)/,,$@),$@)
-	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_SHA256SUMS)
-include $(MAKEPHILE_INCLUDE)/makephile.mk
+$(MAKEPHILE_HOME) $(MAKEPHILE_INCLUDE):
+	@mkdir -p $@
 
 $(MAKEPHILE_HOME)/$(MAKEPHILE_SHA256SUMS): $(MAKEPHILE_HOME)
 	@$(info Downloading http://$(MAKEPHILE_HOST)/$(MAKEPHILE_VERSION).sha256 to $@)
 	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(MAKEPHILE_VERSION).sha256,$@)
 	@echo "$(MAKEPHILE_SHA256SUMS_HASH) $@" | sha256sum --check --quiet --strict
 
-$(MAKEPHILE_HOME) $(MAKEPHILE_INCLUDE):
-	@mkdir -p $@
+$(MAKEPHILE_INCLUDE)/makephile.mk: $(MAKEPHILE_INCLUDE) $(MAKEPHILE_HOME)/$(MAKEPHILE_SHA256SUMS)
+	@$(info Bootstrapping Makephile at $@)
+	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_HOME)/,,$@),$@)
+	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_SHA256SUMS)
+include $(MAKEPHILE_INCLUDE)/makephile.mk
 
 ########################################
 # Download file using bash.
