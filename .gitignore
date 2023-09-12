@@ -2,5 +2,7 @@
 .Trash
 .makephile
 
+/src
+
 /.env
 /docker-compose.override.yml

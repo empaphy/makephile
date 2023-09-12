@@ -7,11 +7,14 @@
 #
 # For more information, see https://makephile.empaphy.org
 
-MAKEPHILE                = 1
-MAKEPHILE_VERSION       ?= dev
-MAKEPHILE_HOME          ?= .makephile/$(MAKEPHILE_VERSION)
-MAKEPHILE_INCLUDE       ?= $(MAKEPHILE_HOME)/inc
-MAKEPHILE_LOCAL_INCLUDES = $(addprefix $(MAKEPHILE_INCLUDE)/,aws.mk dotenv.mk usage.mk)
+MAKEPHILE             = 1
+MAKEPHILE_VERSION    ?= dev
+MAKEPHILE_HOME       ?= .makephile/$(MAKEPHILE_VERSION)
+MAKEPHILE_HOST       ?= makephile.empaphy.org
+MAKEPHILE_INCLUDE    ?= $(MAKEPHILE_HOME)/inc
+MAKEPHILE_INCLUDES    = $(addprefix $(MAKEPHILE_INCLUDE)/,aws.mk dotenv.mk usage.mk)
+MAKEPHILE_SHA256SUMS ?= SHA256SUMS
+
 
 ##
 # Gives some basic info about Makephile.
@@ -21,23 +24,23 @@ MAKEPHILE_LOCAL_INCLUDES = $(addprefix $(MAKEPHILE_INCLUDE)/,aws.mk dotenv.mk us
 .PHONY: makephile_about
 makephile_about:
 	@echo 'Makephile - A library for GNU Make.'
-	@echo 'For more information, see https://makephile.empaphy.org'
+	@echo 'For more information, see https://$(MAKEPHILE_HOST)'
 
 ##
 # Download Empaphy include file
 #
 # @internal
 #
-$(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_INCLUDE)
-	$(info Downloading Empaphy file '$@' from 'http://makephile.empaphy.org/$(subst $(MAKEPHILE_HOME)/,,$@)')
-	$(call mphl_download_file,makephile.empaphy.org,/$(subst $(MAKEPHILE_HOME)/,,$@),$@)
+$(MAKEPHILE_INCLUDES): $(MAKEPHILE_INCLUDE)
+	$(info Downloading Empaphy file '$@' from '$(call _mphl_makephile_download_url,$@)')
+	$(call mphl_download_file,$(MAKEPHILE_HOST),$(call _mphl_makephile_download_path,$@),$@)
 	cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_SHA256SUMS)
 
 ##
 # Removes any locally installed Makephile files.
 #
 makephile_clean:
-	@rm -rf $(MAKEPHILE_INCLUDE) .makephile.mk
+	@rm -rf $(MAKEPHILE_INCLUDES) .makephile.mk
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
@@ -163,6 +166,24 @@ offset=$$( \
 offset=$$(($${offset%:*}+3)); \
 tail --bytes="+$${offset}" "$${mphl_temp}/raw" > '$(3)'; \
 rm -f "$${mphl_temp}/raw"
+endef
+
+########################################
+# Returns the download url for the given Makephile file.
+# Parameters:
+#   File that you require.
+########################################
+define _mphl_makephile_download_url
+http://$(MAKEPHILE_HOST)$(call _mphl_makephile_download_path,$(1))
+endef
+
+########################################
+# Returns the download path for the given Makephile file.
+# Parameters:
+#   File that you require.
+########################################
+define _mphl_makephile_download_path
+/$(subst $(MAKEPHILE_HOME)/,,$(1))
 endef
 
 ########################################

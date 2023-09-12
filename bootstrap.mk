@@ -14,7 +14,7 @@
 #            accompanying hash as well!
 #
 MAKEPHILE_VERSION         = dev
-MAKEPHILE_SHA256SUMS_HASH = a0d24d43124c09d7c0070a408069d3f0e6b0c461fc06f7750727bccaaeae087f
+MAKEPHILE_SHA256SUMS_HASH = 0c4cb9b6e8329d2648b74f3d69b1bb0c4d5e8dfcc8b6977b26ffb8474a1520b9
 
 MAKEPHILE_HOST       = makephile.empaphy.org
 MAKEPHILE_HOME       = .makephile/$(MAKEPHILE_VERSION)
