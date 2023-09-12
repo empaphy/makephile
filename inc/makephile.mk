@@ -11,9 +11,17 @@ MAKEPHILE             = 1
 MAKEPHILE_VERSION    ?= dev
 MAKEPHILE_HOME       ?= .makephile/$(MAKEPHILE_VERSION)
 MAKEPHILE_HOST       ?= makephile.empaphy.org
-MAKEPHILE_INCLUDE    ?= $(MAKEPHILE_HOME)/inc
-MAKEPHILE_INCLUDES    = $(addprefix $(MAKEPHILE_INCLUDE)/,aws.mk dotenv.mk usage.mk)
+MAKEPHILE_INC_DIR     = inc
+MAKEPHILE_INCLUDE    ?= $(MAKEPHILE_HOME)/$(MAKEPHILE_INC_DIR)
+MAKEPHILE_INCLUDES    = $(addprefix $(MAKEPHILE_HOME)/,$(MAKEPHILE_MANIFEST))
 MAKEPHILE_SHA256SUMS ?= SHA256SUMS
+
+define MAKEPHILE_MANIFEST
+inc/aws.mk \
+inc/dotenv.mk \
+inc/makephile.mk \
+inc/usage.mk
+endef
 
 ##
 # Gives some basic info about Makephile.
@@ -40,7 +48,7 @@ makephile_clean:
 $(MAKEPHILE_INCLUDES): $(MAKEPHILE_INCLUDE)
 	@$(info Downloading Empaphy file '$@' from '$(call _mphl_makephile_download_url,$@)')
 	@$(call mphl_download_file,$(MAKEPHILE_HOST),$(call _mphl_makephile_download_path,$@),$@)
-	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_SHA256SUMS)
+	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_MANIFEST)
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
@@ -141,13 +149,6 @@ $(eval export $(1))
 endef
 
 ########################################
-# Exports the provided environment variables.
-# Parameters:
-#   The environment variable to export.
-########################################
-mphl_export_var = $(mphl_putenv)
-
-########################################
 # Download file using bash.
 # Parameters:
 #   Host to download file from.
@@ -170,6 +171,7 @@ endef
 
 ########################################
 # Returns the download url for the given Makephile file.
+# TODO: add versioning
 # Parameters:
 #   File that you require.
 ########################################
