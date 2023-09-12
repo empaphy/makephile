@@ -22,8 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Create a Makephile distribution bundle
-        run:  make clean bundle DIST_DIR=_site MAKEPHILE_VERSION='${{ github.ref_name }}'
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with Jekyll
@@ -31,8 +29,13 @@ jobs:
         with:
           source:      ./docs
           destination: ./_site
+      - name: Create a Makephile distribution bundle
+        run:  make clean bundle DIST_DIR=dist MAKEPHILE_VERSION='${{ github.ref_name }}'
+      - name: Copy Jekyll site to `dist/`.
+        run:  cp -a _site/ dist/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
+        with: { path: dist/ }
 
   deploy:
     environment:
