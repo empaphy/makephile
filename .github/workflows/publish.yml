@@ -32,7 +32,7 @@ jobs:
       - name: Create a Makephile distribution bundle
         run:  make clean bundle DIST_DIR=dist MAKEPHILE_VERSION='${{ github.ref_name }}'
       - name: Copy Jekyll site to `dist/`.
-        run:  cp -a _site/ dist/
+        run:  rsync --archive _site/ dist/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with: { path: dist/ }
