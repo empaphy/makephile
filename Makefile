@@ -19,3 +19,5 @@ build:
 tests:
 	$(mphl_target_info)
 	@docker compose run makephile --directory tests tests
+
+help: makephile_usage

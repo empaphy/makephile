@@ -12,12 +12,12 @@ makephile_usage:
 	@echo "Usage: make [target] [VARIABLE=value]"
 	@echo ""
 	@echo "Targets:"
-	@$(philmk_usage_parse_targets)
+	@$(_mphl_usage_parse_targets)
 
 ##
 # Parse the Makefile for targets and their descriptions.
 #
-define philmk_usage_parse_targets
+define _mphl_usage_parse_targets
 $(makephile_grep_multiline) '$(philmk_usage_match_target)[a-zA-Z_-]+:.*(\n|$$)' $(MAKEFILE_LIST) \
 | grep --extended-regexp --text "^[a-zA-Z_-]+:.*" \
 | sort \

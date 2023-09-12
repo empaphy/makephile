@@ -19,10 +19,7 @@ MAKEPHILE_LOCAL_INCLUDES = $(addprefix $(MAKEPHILE_INCLUDE)/,aws.mk dotenv.mk us
 # @internal
 #
 .PHONY: makephile_about
-makephile_about: mphl_about
-
-.PHONY: mphl_about
-mphl_about:
+makephile_about:
 	@echo 'Makephile - A library for GNU Make.'
 	@echo 'For more information, see https://makephile.empaphy.org'
 
@@ -39,7 +36,7 @@ $(MAKEPHILE_LOCAL_INCLUDES): $(MAKEPHILE_INCLUDE)
 ##
 # Removes any locally installed Makephile files.
 #
-mphl_clean:
+makephile_clean:
 	@rm -rf $(MAKEPHILE_INCLUDE) .makephile.mk
 
 ##
@@ -62,7 +59,6 @@ mphl_clean:
 # Information about the current target.
 #
 mphl_target_info = $(eval $(info $(MPHL_EOL)$(_mphl_bold)> Target $@$(_mphl_sgr)))
-makephile_target_info = $(mphl_target_info)
 
 ########################################
 # Make the target with a timeout, by providing a timeout target.
@@ -204,7 +200,6 @@ mphl_grep_regexp_flag := $(shell \
   echo | grep --perl-regexp --only-matching --quiet '^$$' 2>/dev/null \
   && echo '--perl-regexp' || echo '--extended-regexp' \
 )
-makephile_grep_regexp_flag := $(mphl_grep_regexp_flag)
 
 ##
 # Grep for multiline matches.
