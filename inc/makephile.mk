@@ -156,17 +156,28 @@ endef
 #   Target filename.
 ########################################
 define mphl_download_file
-set -e; \
-mphl_temp="$$(mktemp -d)"; \
-exec 7<>'/dev/tcp/$(1)/80'; \
-echo $$'GET $(2) HTTP/1.0\r\nHost: $(1)\r\n\r' >&7; \
-offset=$$( \
-  cat <&7 | tee "$${mphl_temp}/raw" | \
-  grep --byte-offset --extended-regexp --max-count=1 --no-filename $$'^\r?$$' \
-); \
-offset=$$(($${offset%:*}+3)); \
-tail --bytes="+$${offset}" "$${mphl_temp}/raw" > '$(3)'; \
-rm -f "$${mphl_temp}/raw"
+set -e;                                                                        \
+                                                                               \
+function mphl_download_file() {                                                \
+  local host='$(1)';                                                           \
+  local path='$(2)';                                                           \
+  local file='$(3)';                                                           \
+                                                                               \
+  local temp; temp="$$(mktemp -d)";                                            \
+  exec 7<>"/dev/tcp/$${host}/80";                                              \
+  echo "GET $${path} HTTP/1.0"$$'\r\n'"Host: $${host}"$$'\r\n\r' >&7;          \
+  local raw="$${temp}/raw";                                                    \
+  cat <&7 > "$$raw";                                                           \
+  local offset; offset=$$(                                                     \
+    grep --byte-offset --extended-regexp --max-count=1 --no-filename           \
+      $$'^\r?$$' "$$raw"                                                       \
+  );                                                                           \
+  offset=$$(($${offset%:*}+3));                                                \
+  tail --bytes="+$${offset}" "$${temp}/raw" > "$$file";                        \
+  rm -f "$${temp}/raw";                                                        \
+};                                                                             \
+                                                                               \
+mphl_download_file "$$@"
 endef
 
 ########################################

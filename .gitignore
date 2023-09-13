@@ -6,4 +6,5 @@
 
 /.env
 /_site
+/dist
 /docker-compose.override.yml
