@@ -65,6 +65,7 @@ tests:
 .PHONY: bundle
 bundle: $(DIST_FILES) $(SHA256SUMS_FILE)
 	$(mphl_target_info)
+	@cp -v -a makephile.mk m include $(DIST_DIR)/
 	$(info Done.)
 
 .PHONY: clean
