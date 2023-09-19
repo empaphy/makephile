@@ -7,14 +7,14 @@
 #
 # For more information, see https://makephile.empaphy.org
 
-MAKEPHILE             = 1
-MAKEPHILE_VERSION    ?= dev
-MAKEPHILE_HOME       ?= .makephile/$(MAKEPHILE_VERSION)
-MAKEPHILE_HOST       ?= makephile.empaphy.org
-MAKEPHILE_INC_DIR     = inc
-MAKEPHILE_INCLUDE    ?= $(MAKEPHILE_HOME)/$(MAKEPHILE_INC_DIR)
-MAKEPHILE_INCLUDES    = $(addprefix $(MAKEPHILE_HOME)/,$(MAKEPHILE_INCLUDE_FILES))
-MAKEPHILE_SHA256SUMS ?= SHA256SUMS
+MAKEPHILE           = 1
+MAKEPHILE_VERSION  ?= dev
+MAKEPHILE_HOME     ?= .makephile/$(MAKEPHILE_VERSION)
+MAKEPHILE_HOST     ?= makephile.empaphy.org
+MAKEPHILE_INC_DIR   = inc
+MAKEPHILE_INCLUDE  ?= $(MAKEPHILE_HOME)/$(MAKEPHILE_INC_DIR)
+MAKEPHILE_INCLUDES  = $(addprefix $(MAKEPHILE_HOME)/,$(MAKEPHILE_INCLUDE_FILES))
+MAKEPHILE_MANIFEST ?= $(MAKEPHILE_VERSION)/SHA256SUMS
 
 define MAKEPHILE_INCLUDE_FILES
 inc/aws.mk \
@@ -46,7 +46,7 @@ makephile_clean:
 #
 $(MAKEPHILE_INCLUDES): $(MAKEPHILE_INCLUDE)
 	@$(call mphl_download_file,$(MAKEPHILE_HOST),$(call _mphl_makephile_download_path,$@),$@)
-	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_INCLUDE_FILES)
+	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_MANIFEST)
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
