@@ -1,13 +1,14 @@
 include inc/makephile.mk
 include inc/usage.mk
 
+.DEFAULT_GOAL := bundle
 .SHELLFLAGS := -ce
 SHELL       := bash
 
 ##
 # Files that should be included in the distribution bundle.
 #
-BUNDLE_FILES = $(MAKEPHILE_MANIFEST) bootstrap.mk
+BUNDLE_FILES = $(MAKEPHILE_INCLUDE_FILES) inc/makephile.mk bootstrap.mk
 
 ##
 # Dir where distribution bundles are created in.

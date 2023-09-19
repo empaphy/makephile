@@ -13,13 +13,12 @@ MAKEPHILE_HOME       ?= .makephile/$(MAKEPHILE_VERSION)
 MAKEPHILE_HOST       ?= makephile.empaphy.org
 MAKEPHILE_INC_DIR     = inc
 MAKEPHILE_INCLUDE    ?= $(MAKEPHILE_HOME)/$(MAKEPHILE_INC_DIR)
-MAKEPHILE_INCLUDES    = $(addprefix $(MAKEPHILE_HOME)/,$(MAKEPHILE_MANIFEST))
+MAKEPHILE_INCLUDES    = $(addprefix $(MAKEPHILE_HOME)/,$(MAKEPHILE_INCLUDE_FILES))
 MAKEPHILE_SHA256SUMS ?= SHA256SUMS
 
-define MAKEPHILE_MANIFEST
+define MAKEPHILE_INCLUDE_FILES
 inc/aws.mk \
 inc/dotenv.mk \
-inc/makephile.mk \
 inc/usage.mk
 endef
 
@@ -48,7 +47,7 @@ makephile_clean:
 $(MAKEPHILE_INCLUDES): $(MAKEPHILE_INCLUDE)
 	@$(info Downloading Empaphy file '$@' from '$(call _mphl_makephile_download_url,$@)')
 	@$(call mphl_download_file,$(MAKEPHILE_HOST),$(call _mphl_makephile_download_path,$@),$@)
-	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_MANIFEST)
+	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_INCLUDE_FILES)
 
 ##
 # Clones the Makephile Git repository to the ~/.empaphy directory.
@@ -158,10 +157,10 @@ endef
 define mphl_download_file
 set -e;                                                                        \
                                                                                \
-function mphl_download_file() {                                                \
-  local host='$(1)';                                                           \
-  local path='$(2)';                                                           \
-  local file='$(3)';                                                           \
+function mphl_download_file() {                                               \
+  local host="$$1";                                                            \
+  local path="$$2";                                                            \
+  local file="$$3";                                                            \
                                                                                \
   local temp; temp="$$(mktemp -d)";                                            \
   exec 7<>"/dev/tcp/$${host}/80";                                              \
@@ -177,7 +176,28 @@ function mphl_download_file() {                                                \
   rm -f "$${temp}/raw";                                                        \
 };                                                                             \
                                                                                \
-mphl_download_file "$$@"
+mphl_download_file '$(1)' '$(2)' '$(3)'
+endef
+
+define mphl_explode
+endef
+
+########################################
+# Send an error message to STDERR.
+# Parameters:
+#   The error message that should be logged.
+########################################
+define mphl_error_log
+function mphl_error_log() {                                                    \
+  local message='$(1)'; \
+   \
+  local lines; IFS=$$'\n' read -rd '' -a lines <<<"$$message"; \
+  for line in $${lines[@]}; do \
+    fmt -w 78  |  -t messages; \
+	echo '> ' "$$line" >&2; \
+  done; \
+}; \
+mphl_error_log '$(1)'
 endef
 
 ########################################

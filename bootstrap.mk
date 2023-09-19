@@ -13,9 +13,10 @@
 MAKEPHILE_VERSION = main
 
 MAKEPHILE_HOST            = makephile.empaphy.org
-MAKEPHILE_HOME            = .makephile/$(MAKEPHILE_VERSION)
+MAKEPHILE_DIR             = .makephile
+MAKEPHILE_HOME            = $(MAKEPHILE_DIR)/$(MAKEPHILE_VERSION)
 MAKEPHILE_INCLUDE         = $(MAKEPHILE_HOME)/inc
-MAKEPHILE_MANIFEST        = SHA256SUMS
+MAKEPHILE_MANIFEST        = $(MAKEPHILE_VERSION)/SHA256SUMS
 MAKEPHILE_MANIFEST_SHA256 = $(MAKEPHILE_MANIFEST).sha256sum
 
 SHELL 	    := bash
@@ -24,23 +25,35 @@ SHELL 	    := bash
 $(MAKEPHILE_HOME) $(MAKEPHILE_INCLUDE):
 	@mkdir -p $@
 
-$(MAKEPHILE_HOME)/$(MAKEPHILE_MANIFEST_SHA256): $(MAKEPHILE_HOME)
-	@_mphl_manifest_url='https://$(MAKEPHILE_HOST)/$(MAKEPHILE_VERSION)/$(MAKEPHILE_MANIFEST_SHA256)'; \
-	echo "Attempting to securely download $${_mphl_manifest_url} to $@"; \
-	if ! (curl --output '$@' "$$_mphl_manifest_url" || wget --directory-prefix '$(dir $@)' "$$_mphl_manifest_url"); then \
-	  echo "Failed to download $${_mphl_makephile_manifest_url}. Download it manually." >&2; \
-	  exit 1; \
-	fi
+$(MAKEPHILE_DIR)/$(MAKEPHILE_MANIFEST_SHA256): $(MAKEPHILE_HOME)
+	@echo $$'\n---'
+	@function main() {                                                         \
+  	  echo $$'\n> Attempting to securely download'                             \
+	       $$'\n> '"$${1}" $$'to\n> $@.\n\n```';                               \
+	  if ! (                                                                   \
+	    curl --output '$@' "$$1" || wget --directory-prefix '$(dir $@)' "$$1"  \
+	  ); then                                                                  \
+	  	echo $$'```\n'                                                         \
+	         $$'\n> Failed to download' "\`$${1}\`."                           \
+             $$'\n> Please download it manually.\n' >&2;                       \
+	    exit 1;                                                                \
+	  fi;                                                                      \
+	  echo $$'```';                                                            \
+	};                                                                         \
+	main 'https://$(MAKEPHILE_HOST)/$(MAKEPHILE_MANIFEST_SHA256)'
 
-$(MAKEPHILE_HOME)/$(MAKEPHILE_MANIFEST): $(MAKEPHILE_HOME)/$(MAKEPHILE_MANIFEST_SHA256)
-	@$(info Downloading http://$(MAKEPHILE_HOST)/$(MAKEPHILE_VERSION)/$(MAKEPHILE_MANIFEST) to $@)
-	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(MAKEPHILE_VERSION)/$(MAKEPHILE_MANIFEST),$@)
-	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --strict $(MAKEPHILE_MANIFEST_SHA256)
+$(MAKEPHILE_DIR)/$(MAKEPHILE_MANIFEST): $(MAKEPHILE_DIR)/$(MAKEPHILE_MANIFEST_SHA256)
+	@echo $$'\n---'
+	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(MAKEPHILE_MANIFEST),$@)
+	@echo $$'> Checking integrity of `$@`.\n'
+	@cd '$(dir $@)' && sha256sum --check --strict $(notdir $(MAKEPHILE_MANIFEST_SHA256))
 
-$(MAKEPHILE_INCLUDE)/makephile.mk: $(MAKEPHILE_INCLUDE) $(MAKEPHILE_HOME)/$(MAKEPHILE_MANIFEST)
-	@$(info Bootstrapping Makephile at $@)
-	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_HOME)/,$(MAKEPHILE_VERSION)/,$@),$@)
-	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_MANIFEST)
+$(MAKEPHILE_INCLUDE)/makephile.mk: $(MAKEPHILE_INCLUDE) $(MAKEPHILE_DIR)/$(MAKEPHILE_MANIFEST)
+	@echo $$'\n---\n> Bootstrapping Makephile at `$@`.'
+	@$(call _mphl_download_file,$(MAKEPHILE_HOST),/$(subst $(MAKEPHILE_DIR)/,,$@),$@)
+	@echo -n '> Checking integrity... '
+	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(notdir $(MAKEPHILE_MANIFEST))
+	@echo $$'Done.\n'
 include $(MAKEPHILE_INCLUDE)/makephile.mk
 
 ########################################
@@ -54,9 +67,11 @@ define _mphl_download_file
 set -e;                                                                        \
                                                                                \
 function _mphl_download_file() {                                               \
-  local host='$(1)';                                                           \
-  local path='$(2)';                                                           \
-  local file='$(3)';                                                           \
+  local host="$$1";                                                            \
+  local path="$$2";                                                            \
+  local file="$$3";                                                            \
+  																			   \
+  echo $$'\n> Downloading' "http://$${host}$${path} to $${file}.";             \
                                                                                \
   local temp; temp="$$(mktemp -d)";                                            \
   exec 7<>"/dev/tcp/$${host}/80";                                              \
@@ -72,7 +87,7 @@ function _mphl_download_file() {                                               \
   rm -f "$${temp}/raw";                                                        \
 };                                                                             \
                                                                                \
-_mphl_download_file "$$@"
+_mphl_download_file '$(1)' '$(2)' '$(3)'
 endef
 
 # Copyright © 2023 The Empaphy Project
