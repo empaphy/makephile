@@ -22,6 +22,9 @@ MAKEPHILE_MANIFEST_SHA256 = $(MAKEPHILE_MANIFEST).sha256sum
 SHELL 	    := bash
 .SHELLFLAGS := -ce
 
+about:
+	@$(info This is the Makephile bootstrap file. You should not run it directly.)
+
 $(MAKEPHILE_HOME) $(MAKEPHILE_INCLUDE):
 	@mkdir -p $@
 
