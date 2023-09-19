@@ -45,7 +45,6 @@ makephile_clean:
 # @internal
 #
 $(MAKEPHILE_INCLUDES): $(MAKEPHILE_INCLUDE)
-	@$(info Downloading Empaphy file '$@' from '$(call _mphl_makephile_download_url,$@)')
 	@$(call mphl_download_file,$(MAKEPHILE_HOST),$(call _mphl_makephile_download_path,$@),$@)
 	@cd '$(MAKEPHILE_HOME)' && sha256sum --check --ignore-missing --quiet $(MAKEPHILE_INCLUDE_FILES)
 
@@ -161,6 +160,8 @@ function mphl_download_file() {                                               \
   local host="$$1";                                                            \
   local path="$$2";                                                            \
   local file="$$3";                                                            \
+  																			   \
+  echo $$'\n> Downloading' "http://$${host}$${path} to $${file}.";             \
                                                                                \
   local temp; temp="$$(mktemp -d)";                                            \
   exec 7<>"/dev/tcp/$${host}/80";                                              \
@@ -216,7 +217,7 @@ endef
 #   File that you require.
 ########################################
 define _mphl_makephile_download_path
-/$(subst $(MAKEPHILE_HOME)/,,$(1))
+/$(subst $(MAKEPHILE_HOME)/,$(MAKEPHILE_VERSION)/,$(1))
 endef
 
 ########################################
