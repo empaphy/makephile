@@ -7,8 +7,11 @@
 #
 # For more information, see https://makephile.empaphy.org
 
-MAKEPHILE_HOME ?= .makephile
-MAKEPHILE_LIB   = $(MAKEPHILE_HOME)/lib
+MAKEPHILE_BASE_URL ?= https://raw.githubusercontent.com/empaphy/makephile/$(MAKEPHILE_VERSION)
+MAKEPHILE_HOME     ?= .makephile
+MAKEPHILE_LIB_PATH ?= lib
+MAKEPHILE_LIB       = $(MAKEPHILE_HOME)/$(MAKEPHILE_LIB_PATH)
+MAKEPHILE_VERSION  ?= main
 
 ##
 # Gives some basic info about Makephile.
@@ -21,7 +24,7 @@ makephile_about:
 	@echo 'For more information, see https://$(MAKEPHILE_HOST)'
 
 $(MAKEPHILE_LIB)/%:
-	@phil_download_file '$(MAKEPHILE_BASE_URL)/$(notdir $(MAKEPHILE_HOME))/$(notdir $@)' '$@'
+	@phil_download_file '$(MAKEPHILE_BASE_URL)/$(MAKEPHILE_LIB_PATH)/$(notdir $@)' '$@'
 
 ##
 # Information about the current target.
