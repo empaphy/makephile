@@ -3,7 +3,7 @@
 MAKEPHILE_VERSION = main
 
 .makephile/bootstrap.mk:
-	curl --create-dirs --output $@ https://makephile.empaphy.org/bootstrap.mk
+	curl --fail --silent --create-dirs --show-error --output $@ https://makephile.empaphy.org/bootstrap.mk
 include .makephile/bootstrap.mk
 
 #ifdef MAKEPHILE_LIB

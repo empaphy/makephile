@@ -1,7 +1,5 @@
-MAKEPHILE_HOME = .
-
 include lib/core.mk
-include $(MAKEPHILE_LIB)/usage.mk
+include lib/usage.mk
 
 .DEFAULT_GOAL := bundle
 .SHELLFLAGS   := -ce
