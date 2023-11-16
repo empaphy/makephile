@@ -1,7 +1,8 @@
 .DS_Store
 .Trash
-.makephile
 
+/$(MAKEPHILE_LIB)/*
+/.makephile/*
 /src
 
 /.env
