@@ -6,6 +6,6 @@ MAKEPHILE_VERSION = main
 	curl --create-dirs --output $@ https://makephile.empaphy.org/bootstrap.mk
 include .makephile/bootstrap.mk
 
-ifdef MAKEPHILE_LIB
+#ifdef MAKEPHILE_LIB
 include $(MAKEPHILE_LIB)/usage.mk
-endif
+#endif
