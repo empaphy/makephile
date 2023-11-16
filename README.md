@@ -6,23 +6,27 @@ _Love make, not jar_
 Makephile is a library for makefiles. It provides a set of functions to make
 writing makefiles easier.
 
+## Dependencies
+
+- GNU Make (v3 or higher)
+- GNU Bash (v3 or higher)
 
 ## How to use
 
-Add the following snippet to your Makefile:
+Add the following snippet to your Makefile, or create a separate `makephile.mk`
+to import into your Makefile:
 
 ```makefile
-# This snippet bootstraps Makephile by downloading it.
-.makephile.mk:
-	@t=`mktemp`;h=makephile.empaphy.org;exec 7<>/dev/tcp/$$h/80;printf "GET %b"\
-	"/m HTTP/1.0\r\nHost: $$h\r\n\r\n">&7;b=$$(cat<&7|tee "$$t"|grep -bEh \
-	$$'^\r?$$');tail -c+$$(($${b%%:*}+3)) "$$t">$@;rm "$$t"
-include .makephile.mk
+# Makephile configuration
+# For more information, see https://makephile.empaphy.org
+MAKEPHILE_VERSION = main
 
-# Add additional Makephile includes here, they will be downloaded automatically.
-ifdef MAKEPHILE_INCLUDE
-include .makephile/aws.mk
-include .makephile/usage.mk
+.makephile/bootstrap.mk:
+	curl --create-dirs --output $@ https://makephile.empaphy.org/bootstrap.mk
+include .makephile/bootstrap.mk
+
+ifdef MAKEPHILE_LIB
+include $(MAKEPHILE_LIB)/usage.mk
 endif
 ```
 

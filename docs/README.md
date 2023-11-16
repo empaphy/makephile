@@ -12,18 +12,15 @@ writing makefiles easier.
 Add the following snippet to your Makefile:
 
 ```makefile
-# This snippet bootstraps Makephile by downloading it.
-.makephile.mk:
-	@t=`mktemp`;h=makephile.empaphy.org;exec 7<>/dev/tcp/$$h/80;printf "GET %b"\
-	"/m HTTP/1.0\r\nHost: $$h\r\n\r\n">&7;b=$$(cat<&7|tee "$$t"|grep -bEh \
-	$$'^\r?$$');tail -c+$$(($${b%%:*}+3)) "$$t">$@;rm "$$t"
-include .makephile.mk
+# Makephile configuration
+# For more information, see https://makephile.empaphy.org
+MAKEPHILE_VERSION = main
 
-# Add additional Makephile includes here, they will be downloaded automatically.
-ifdef MAKEPHILE_INCLUDE
-include .makephile/aws.mk
-include .makephile/usage.mk
-endif
+.makephile/bootstrap.mk:
+	curl --create-dirs --output $@ https://makephile.empaphy.org/bootstrap.mk
+include .makephile/bootstrap.mk
+
+include .makephile/lib/usage.mk
 ```
 
 
@@ -37,7 +34,7 @@ Makephile:
 : Makes the target with a timeout, by providing a timeout target.
 
 
-`$(makephile_target_info)`
+`$(phil_target_info)`
 : Prints information about the current target.
 
 For example:
@@ -45,8 +42,8 @@ For example:
   ```makefile
   .PHONY: foo
   foo:
-      $(makephile_target_info)
-      @echo "Hello, world!"
+  	$(makephile_target_info)
+  	@echo "Hello, world!"
   ```
 Will output:
   ```

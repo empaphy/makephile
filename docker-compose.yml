@@ -5,4 +5,4 @@ services:
     image: empaphy/makephile:${MAKEPHILE_VERSION:-latest}
     build: .
     volumes:
-      - { type: bind, source: ., target: /opt/makephile }
+      - { type: bind, source: ., target: /opt/makephile, bind: { create_host_path: true } }
