@@ -19,7 +19,7 @@ to import into your Makefile:
 ```makefile
 # Makephile configuration
 # For more information, see https://makephile.empaphy.org
-MAKEPHILE_VERSION = main
+MAKEPHILE_VERSION = 1.x
 
 .makephile/bootstrap.mk:
 	curl --create-dirs --output $@ https://makephile.empaphy.org/bootstrap.mk

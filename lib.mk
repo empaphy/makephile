@@ -2,7 +2,7 @@ MAKEPHILE_BASE_URL ?= https://raw.githubusercontent.com/empaphy/makephile/$(MAKE
 MAKEPHILE_HOME     ?= .makephile
 MAKEPHILE_LIB       = $(MAKEPHILE_HOME)/$(MAKEPHILE_LIB_PATH)
 MAKEPHILE_LIB_PATH  = lib
-MAKEPHILE_VERSION  ?= main
+MAKEPHILE_VERSION  ?= 1.x
 
 $(MAKEPHILE_LIB)/%:
 	@echo $$'\n> Downloading $(MAKEPHILE_BASE_URL)/$(MAKEPHILE_LIB_PATH)/$(notdir $@) to $@.'
