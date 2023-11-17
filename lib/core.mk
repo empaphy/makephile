@@ -30,6 +30,7 @@ phil_target_info = $(eval $(info $(PHIL_EOL)$(_phil_bold)> Target $@$(_phil_sgr)
 #   The timeout file to create. Use this as dependency for your target.
 ########################################
 define phil_MAKE_with_timeout_hours
+set -e; \
 touch -A '-$(2)0000' '$(3)' > /dev/null 2>&1 || touch -d '$(2) hours ago' '$(3)' > /dev/null 2>&1; \
 ${MAKE} $(1)
 endef
