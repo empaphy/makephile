@@ -12,5 +12,5 @@ MAKEPHILE_VERSION ?= main
 MAKEPHILE_BASE_URL = https://raw.githubusercontent.com/empaphy/makephile/$(MAKEPHILE_VERSION)
 
 $(MAKEPHILE_HOME)/lib.mk:
-	curl --fail --silent --create-dirs --show-error --output '$@' '$(MAKEPHILE_BASE_URL)/lib.mk'
+	@curl --fail --silent --create-dirs --show-error --output '$@' '$(MAKEPHILE_BASE_URL)/lib.mk'
 include $(MAKEPHILE_HOME)/lib.mk

@@ -5,6 +5,7 @@ MAKEPHILE_LIB_PATH  = lib
 MAKEPHILE_VERSION  ?= main
 
 $(MAKEPHILE_LIB)/%:
-	curl --fail --silent --create-dirs --show-error --output '$@' '$(MAKEPHILE_BASE_URL)/$(MAKEPHILE_LIB_PATH)/$(notdir $@)'
+	@echo $$'\n> Downloading $(MAKEPHILE_BASE_URL)/$(MAKEPHILE_LIB_PATH)/$(notdir $@) to $@.'
+	@curl --fail --silent --create-dirs --show-error --output '$@' '$(MAKEPHILE_BASE_URL)/$(MAKEPHILE_LIB_PATH)/$(notdir $@)'
 
 include $(MAKEPHILE_LIB)/core.mk
